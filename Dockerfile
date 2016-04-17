@@ -1,9 +1,6 @@
 FROM ubuntu:latest
 # Syncthing-Relay Server
-
 ENV DEBUG           false
-ENV SERV_PORT       22067
-ENV STATUS_PORT     22070
 
 # 10 mbps
 ENV RATE_GLOBAL     10000000
@@ -14,14 +11,12 @@ ENV TIMEOUT_MSG     1m45s
 ENV TIMEOUT_NET     3m30s
 ENV PING_INT        1m15s
 
-ENV PUBLIC_IP       "0.0.0.0"
 ENV PROVIDED_BY     "syncthing-relay"
+ENV SERVER          "0.0.0.0:22067"
+# disable status interface. for enablin it use 0.0.0.0:22070 and add ' -p 22070:22070' to you docker command
+ENV STATUS          ""
 # leave empty for private relay use "https://relays.syncthing.net/endpoint" for public relay
 ENV POOLS           ""
-
-ENV SERVER          "${PUBLIC_IP}:${SERV_PORT}"
-# disable status interface
-ENV STATUS_SRV      ""
 
 ADD http://build.syncthing.net/job/relaysrv/lastSuccessfulBuild/artifact/relaysrv-linux-amd64.tar.gz /tmp/relaysrv.tar.gz
 RUN apt-get update && \
@@ -45,7 +40,7 @@ VOLUME /home/relaysrv
 CMD /home/relaysrv/relaysrv/relaysrv \
     -keys="/home/relaysrv/certs" \
     -listen="${SERVER}" \
-    -status-srv="${STATUS_SRV}" \
+    -status-srv="${STATUS}" \
     -debug="${DEBUG}" \
     -global-rate="${RATE_GLOBAL}" \
     -per-session-rate="${RATE_SESSION}" \
