@@ -52,8 +52,8 @@ docker run --name syncthing-relay -d -p 22067:22067 -e DEBUG=true --restart=alwa
 * TIMEOUT_NET: change net timeout / default: 3m30s
 * PING_INT: change ping timeout / default: 1m15s
 * PROVIDED_BY: change provided by string / default:"syncthing-relay"
-* SERVER: change listen interface and port / default: "0.0.0.0:22067"
-* STATUS:  disable status interface. for enable it use 0.0.0.0:22070 and add ' -p 22070:22070' to you docker command / default: ""
+* SERVER_PORT: port hte relay server listens on / default:22067
+* STATUS_PORT: disable by default to enable it add `-d 22070:22070` to you `docker run` command  / default:22070
 * POOLS: leave empty for private relay use "https://relays.syncthing.net/endpoint" for public relay / default: ""
 
 Have a look at the current doc [GitHub - relaysrv](https://github.com/syncthing/relaysrv/blob/master/README.md)
