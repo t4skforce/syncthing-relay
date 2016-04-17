@@ -1,2 +1,168 @@
-# syncthing-relay
-Syncthing relay server Docker image for http://syncthing.net/
+# syncthing-relaysrv
+Docker Container for the global relay server for the [http://syncthing.net/](http://syncthing.net/) project. I build the container because ther is no official one. This build is listening on the gihub project of the relay server and gets updated whenever there is a code change. [relaysrv GitHub repo](https://github.com/syncthing/relaysrv). The container is intendet for people who like to roll their own private syncthing "cloud".
+
+The files for this container can be found at my [GitHub repo](https://github.com/t4skforce/syncthing-relay)
+
+[![](https://badge.imagelayers.io/t4skforce/syncthing-relay:latest.svg)](https://imagelayers.io/?images=t4skforce/syncthing-relay:latest 'Get your own badge on imagelayers.io')
+
+# About the Container
+
+This build is based on [ubuntu:latest](https://hub.docker.com/_/ubuntu/) and installs the latests successful build of the syncthing relay server.
+
+# How to use this image
+
+`docker run --name syncthing-relay -d -p 22067:22067 --restart=always t4skforce/syncthing-relay:latest`
+
+This will store the certificates and all of the data in `/home/relaysrv/`. You will probably want to make at least the certificate folder a persistent volume (recommended):
+
+`docker run --name syncthing-relay -d -p 22067:22067 -v /your/home:/home/relaysrv/certs --restart=always t4skforce/syncthing-relay:latest`
+
+If you already have certificates generated and want to use them and protect the folder from being changed by the docker images use the following command:
+
+`docker run --name syncthing-relay -d -p 22067:22067 -v /your/home:/home/relaysrv/certs:ro --restart=always t4skforce/syncthing-relay:latest`
+
+Creating cert directory and setting permissions (docker process is required to have access):
+```bash
+mkdir -p /your/home/certs
+chown -R 999:docker /your/home/certs
+```
+
+# Container Configuration
+
+There are several configuarion options available. The options are configurable via environment variables (docker default):
+
+Example enablin debug mode:
+```bash
+export DEBUG=true
+docker run --name syncthing-relay -d -p 22067:22067 --restart=always t4skforce/syncthing-relay:latest
+```
+
+or
+
+```bash
+docker run --name syncthing-relay -d -p 22067:22067 -e DEBUG=true --restart=always t4skforce/syncthing-relay:latest
+```
+
+## Options
+
+* DEBUG: enable debugging (true/false) / default:false
+* RATE_GLOBAL: global maximum speed for transfer / default:10000000 = 10mbps
+* RATE_SESSION: maximum speed for transfer per session / default:500000 = 500kbps
+* TIMEOUT_MSG: change message timeout / default: 1m45s
+* TIMEOUT_NET: change net timeout / default: 3m30s
+* PING_INT: change ping timeout / default: 1m15s
+* PROVIDED_BY: change provided by string / default:"syncthing-relay"
+* SERVER: change listen interface and port / default: "0.0.0.0:22067"
+* STATUS:  disable status interface. for enable it use 0.0.0.0:22070 and add ' -p 22070:22070' to you docker command / default: ""
+* POOLS: leave empty for private relay use "https://relays.syncthing.net/endpoint" for public relay / default: ""
+
+Have a look at the current doc [GitHub - relaysrv](https://github.com/syncthing/relaysrv/blob/master/README.md)
+
+# Upgrade
+```bash
+# download updates
+docker pull t4skforce/syncthing-relay:latest
+# stop current running image
+docker stop syncthing-relay
+# remove container
+docker rm syncthing-relay
+# start with new base image
+docker run --name syncthing-relay -d -p 22067:22067 -e RATE_GLOBAL=6000000 -e RATE_SESSION=1000000 -v /your/home:/home/relaysrv/certs:ro --restart=always t4skforce/syncthing-relay:latest
+```
+
+# Autostart
+To enable the relay server to start at system-startup we need to create a systemd service file `vim /lib/systemd/system/syncthing-relay.service`:
+
+```ini
+[Unit]
+Description=Syncthing-relay-Server
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker start -a syncthing-relay
+ExecStop=/usr/bin/docker stop -t 2 syncthing-relay
+
+[Install]
+WantedBy=multi-user.target
+```
+
+To start the service manually call `systemctl start syncthing-relay`. For retreaving the current service status call `systemctl status syncthing-relay`
+
+```bash
+root@syncthing:~# systemctl status syncthing-relay
+● syncthing-relay.service - Syncthing-relay-Server
+   Loaded: loaded (/lib/systemd/system/syncthing-relay.service; disabled)
+   Active: active (running) since Sun 2016-04-17 14:33:07 BST; 13s ago
+ Main PID: 11010 (docker)
+   CGroup: /system.slice/syncthing-relay.service
+           └─11010 /usr/bin/docker start -a syncthing-relay
+
+Apr 17 14:33:07 syncthing docker[11010]: Server device ID is <your device ID of the server>
+```
+
+And last but not least we need to enable our newly created service via issuing `systemctl enable syncthing-relay`:
+```bash
+root@syncthing:~# systemctl enable syncthing-relay
+Created symlink from /etc/systemd/system/multi-user.target.wants/syncthing-relay.service to /lib/systemd/system/syncthing-relay.service.
+```
+
+# Auto Upgrade
+Combine all the above and autoupgrade the container at defined times. This requires you to at least setup [Autostart](#autostart).
+
+First we need to generate your upgrade shell script `vim /root/syncthing-relay_upgrade.sh`:
+
+```bash
+#!/bin/bash
+
+# Directory to look for the Certificates
+CERT_HOME="/your/home/certs"
+
+# download updates
+docker pull t4skforce/syncthing-relay:latest
+# stop current running image
+docker stop syncthing-relay
+# remove container
+docker rm syncthing-relay
+# start with new base image
+docker run --name syncthing-relay -d -p 22067:22067 -e RATE_GLOBAL=6000000 -e RATE_SESSION=1000000 -v ${CERT_HOME}:/home/relaysrv/certs:ro --restart=always t4skforce/syncthing-relay:latest
+# stop container
+docker stop syncthing-relay
+# start via service
+systemctl start syncthing-relay
+```
+
+Next we need to make this file executable `chmod +x /root/syncthing-relay_upgrade.sh`, and test if the upgrade script works by calling the shell-script and checking the service status afterwards:
+```bash
+root@syncthing:~# /root/syncthing-relay_upgrade.sh
+root@syncthing:~# systemctl status syncthing-relay
+● syncthing-relay.service - Syncthing-relay-Server
+   Loaded: loaded (/lib/systemd/system/syncthing-relay.service; enabled)
+   Active: active (running) since Sun 2016-04-17 11:42:57 BST; 2s ago
+ Main PID: 2642 (docker)
+   CGroup: /system.slice/syncthing-relay.service
+           └─2642 /usr/bin/docker start -a syncthing-relay
+```
+
+Now we need to set the trigger for the upgrade. In this example we just setup a weekly upgrade via crontab scheduled for Sunday at midnight. We add `0 0 * * 7 root /root/syncthing-relay_upgrade.sh` to `/etc/crontab`. The resulting file looks like:
+
+```bash
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of the other crontabs do.
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# m h dom mon dow user  command
+17 *    * * *   root    cd / && run-parts --report /etc/cron.hourly
+25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+# Syncthing-relay-Server Docker Container Upgrade
+0  0    * * 7   root    /root/syncthing-relay_upgrade.sh
+#
+```
