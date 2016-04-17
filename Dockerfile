@@ -3,6 +3,7 @@ FROM ubuntu:latest
 
 ENV DEBUG           false
 ENV SERV_PORT       22067
+ENV STATUS_PORT     22070
 
 # 10 mbps
 ENV RATE_GLOBAL     10000000
@@ -18,6 +19,9 @@ ENV PROVIDED_BY     "syncthing-relay"
 # leave empty for private relay use "https://relays.syncthing.net/endpoint" for public relay
 ENV POOLS           ""
 
+ENV SERVER          "${PUBLIC_IP}:${SERV_PORT}"
+# disable status interface
+ENV STATUS_SRV      ""
 
 ADD http://build.syncthing.net/job/relaysrv/lastSuccessfulBuild/artifact/relaysrv-linux-amd64.tar.gz /tmp/relaysrv.tar.gz
 RUN apt-get update && \
@@ -40,7 +44,8 @@ VOLUME /home/relaysrv
 
 CMD /home/relaysrv/relaysrv/relaysrv \
     -keys="/home/relaysrv/certs" \
-    -listen="${PUBLIC_IP}:${SERV_PORT}" \
+    -listen="${SERVER}" \
+    -status-srv="${STATUS_SRV}" \
     -debug="${DEBUG}" \
     -global-rate="${RATE_GLOBAL}" \
     -per-session-rate="${RATE_SESSION}" \
