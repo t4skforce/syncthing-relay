@@ -88,18 +88,20 @@ ExecStop=/usr/bin/docker stop -t 2 syncthing-relay
 WantedBy=multi-user.target
 ```
 
-To start the service manually call `systemctl start syncthing-relay`. For retreaving the current service status call `systemctl status syncthing-relay`
+To start the service manually call `systemctl start syncthing-relay`. For retreaving the current service status call `systemctl status syncthing-relay -l`
 
 ```bash
 root@syncthing:~# systemctl status syncthing-relay
 ● syncthing-relay.service - Syncthing-relay-Server
    Loaded: loaded (/lib/systemd/system/syncthing-relay.service; disabled)
-   Active: active (running) since Sun 2016-04-17 14:33:07 BST; 13s ago
+   Active: active (running) since Sun 2016-04-17 15:41:39 BST; 9min ago
  Main PID: 11010 (docker)
    CGroup: /system.slice/syncthing-relay.service
            └─11010 /usr/bin/docker start -a syncthing-relay
 
-Apr 17 14:33:07 syncthing docker[11010]: Server device ID is <your device ID of the server>
+Apr 17 15:41:39 syncthing docker[11651]: 2016/04/17 14:41:39 main.go:89: Connection limit 838860
+Apr 17 15:41:39 syncthing docker[11651]: 2016/04/17 14:41:39 main.go:147: URI: relay://0.0.0.0:22067/?id=<your server id>&pingInterval=1m15s&networkTimeout=3m30s&sessionLimitBps=1000000&globalLimitBps=6000000&statusAddr=&providedBy=syncthing-relay
+
 ```
 
 And last but not least we need to enable our newly created service via issuing `systemctl enable syncthing-relay`:
