@@ -124,7 +124,7 @@ CERT_HOME="/your/home/certs"
 # download updates
 docker pull t4skforce/syncthing-relay:latest
 # stop current running image
-docker stop syncthing-relay
+systemctl stop syncthing-relay
 # remove container
 docker rm syncthing-relay
 # start with new base image
