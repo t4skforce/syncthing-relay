@@ -23,7 +23,7 @@ RUN apt-get update && \
     apt-get install ca-certificates wget -y && \
     apt-get autoremove -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
-	wget $(wget -q https://api.github.com/repos/syncthing/relaysrv/releases/latest -O- | egrep "browser_download_url.*relaysrv-linux-amd64.tar.gz" | cut -d'"' -f4) -O /tmp/relaysrv.tar.gz && \
+	wget $(wget -q https://api.github.com/repos/syncthing/relaysrv/releases/latest -O- | egrep "browser_download_url.*relaysrv-linux-amd64.*.gz" | cut -d'"' -f4) -O /tmp/relaysrv.tar.gz && \
 	apt-get remove wget -y && \
     tar -xzvf /tmp/relaysrv.tar.gz && \
     rm /tmp/relaysrv.tar.gz
