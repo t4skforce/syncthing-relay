@@ -24,7 +24,7 @@ If you already have certificates generated and want to use them and protect the 
 Creating cert directory and setting permissions (docker process is required to have access):
 ```bash
 mkdir -p /your/home/certs
-chown -R 999:docker /your/home/certs
+chown -R 1000:1000 /your/home/certs
 ```
 
 # Container Configuration
