@@ -68,6 +68,8 @@ docker stop syncthing-relay
 docker rm syncthing-relay
 # start with new base image
 docker run --name syncthing-relay -d -p 22067:22067 -e RATE_GLOBAL=6000000 -e RATE_SESSION=1000000 -v /your/home:/home/relaysrv/certs:ro --restart=always t4skforce/syncthing-relay:latest
+# cleanup docker images
+docker rmi -f $(docker images | grep "<none>" | awk "{print \$3}")
 ```
 
 # Autostart
