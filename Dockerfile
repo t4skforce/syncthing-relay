@@ -26,7 +26,7 @@ ENV POOLS           ""
 #               Setup                  #
 ########################################
 ENV USERNAME relaysrv
-ENV	USERGROUP relaysrv
+ENV USERGROUP relaysrv
 ENV APPUID 1000
 ENV APPGID 1000
 ENV USER_HOME /home/relaysrv
