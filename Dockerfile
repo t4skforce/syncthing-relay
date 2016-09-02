@@ -1,4 +1,7 @@
-FROM ubuntu:latest
+FROM debian:latest
+########################################
+#              Settings                #
+########################################
 # Syncthing-Relay Server
 ENV DEBUG           false
 
@@ -19,28 +22,50 @@ ENV PROVIDED_BY     "syncthing-relay"
 # leave empty for private relay use "https://relays.syncthing.net/endpoint" for public relay
 ENV POOLS           ""
 
-RUN apt-get update && \
-    apt-get install ca-certificates wget -y && \
-    apt-get autoremove -y && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* && \
-	wget $(wget -q https://api.github.com/repos/syncthing/relaysrv/releases/latest -O- | egrep "browser_download_url.*relaysrv-linux-amd64.*.gz" | cut -d'"' -f4) -O /tmp/relaysrv.tar.gz && \
-	apt-get remove wget -y && \
-    tar -xzvf /tmp/relaysrv.tar.gz && \
-    rm /tmp/relaysrv.tar.gz
+########################################
+#               Setup                  #
+########################################
+ENV USERNAME relaysrv
+ENV	USERGROUP relaysrv
+ENV APPUID 1000
+ENV APPGID 1000
+ENV USER_HOME /home/relaysrv
+ENV BUILD_REQUIREMENTS curl openssl
+ENV REQUIREMENTS ca-certificates
+########################################
+
+USER root
+ENV DEBIAN_FRONTEND noninteractive
+# setup
+RUN apt-get update -qqy \
+	&& apt-get -qqy --no-install-recommends install ${BUILD_REQUIREMENTS} ${REQUIREMENTS} \
+	&& mkdir -p ${USER_HOME} \
+	&& groupadd --system --gid ${APPGID} ${USERGROUP} \
+	&& useradd --system --uid ${APPUID} -g ${USERGROUP} ${USERNAME} --home ${USER_HOME} \
+	&& echo "${USERNAME}:$(openssl rand 512 | openssl sha256 | awk '{print $2}')" | chpasswd \
+	&& chown -R ${USERNAME}:${USERGROUP} ${USER_HOME}
+
+# install relay
+WORKDIR /tmp/
+RUN curl -Ls $(curl -Ls https://api.github.com/repos/syncthing/relaysrv/releases/latest | egrep "browser_download_url.*relaysrv-linux-amd64.*.gz" | cut -d'"' -f4) --output relaysrv.tar.gz \
+	&& tar -zxf relaysrv.tar.gz \
+	&& rm relaysrv.tar.gz \
+	&& mkdir -p ${USER_HOME}/server ${USER_HOME}/certs \
+	&& cp /tmp/*relaysrv*/*relaysrv ${USER_HOME}/server/relaysrv \
+	&& chown -R ${USERNAME}:${USERGROUP} ${USER_HOME}
+
+# cleanup
+RUN apt-get --auto-remove -y purge ${BUILD_REQUIREMENTS} \
+  	&& rm -rf /var/lib/apt/lists/* \
+	&& rm -rf /tmp/*
 
 EXPOSE ${STATUS_PORT} ${SERVER_PORT}
 
-RUN groupadd -r relaysrv && \
-    useradd -r -m -g relaysrv relaysrv && \
-    mv relaysrv* /home/relaysrv/relaysrv && \
-    mkdir -p /home/relaysrv/certs && \
-    chown -R relaysrv:relaysrv /home/relaysrv
+USER $USERNAME
+VOLUME ${USER_HOME}/certs
 
-USER relaysrv
-VOLUME /home/relaysrv
-
-CMD /home/relaysrv/relaysrv/relaysrv \
-    -keys="/home/relaysrv/certs" \
+CMD ${USER_HOME}/server/relaysrv \
+    -keys="${USER_HOME}/certs" \
     -listen="0.0.0.0:${SERVER_PORT}" \
     -status-srv="0.0.0.0:${STATUS_PORT}" \
     -debug="${DEBUG}" \
