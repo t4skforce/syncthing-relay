@@ -69,7 +69,7 @@ docker rm syncthing-relay
 # start with new base image
 docker run --name syncthing-relay -d -p 22067:22067 -e RATE_GLOBAL=6000000 -e RATE_SESSION=1000000 -v /your/home:/home/relaysrv/certs:ro --restart=always t4skforce/syncthing-relay:latest
 # cleanup docker images
-docker rmi -f $(docker images | grep "<none>" | awk "{print \$3}")
+docker rmi -f $(docker images | grep "<none>" | awk "{print \$3}") > /dev/null 2>&1
 ```
 
 # Autostart
@@ -135,6 +135,8 @@ docker run --name syncthing-relay -d -p 22067:22067 -e RATE_GLOBAL=6000000 -e RA
 docker stop syncthing-relay
 # start via service
 systemctl start syncthing-relay
+# cleanup docker images
+docker rmi -f $(docker images | grep "<none>" | awk "{print \$3}") > /dev/null 2>&1
 ```
 
 Next we need to make this file executable `chmod +x /root/syncthing-relay_upgrade.sh`, and test if the upgrade script works by calling the shell-script and checking the service status afterwards:
