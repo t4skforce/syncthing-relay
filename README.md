@@ -3,7 +3,7 @@ Docker Container for the global relay server for the [http://syncthing.net/](htt
 
 The files for this container can be found at my [GitHub repo](https://github.com/t4skforce/syncthing-relay)
 
-[![](https://badge.imagelayers.io/t4skforce/syncthing-relay:latest.svg)](https://imagelayers.io/?images=t4skforce/syncthing-relay:latest 'Get your own badge on imagelayers.io')
+[![](https://images.microbadger.com/badges/image/t4skforce/syncthing-relay.svg)](http://microbadger.com/images/t4skforce/syncthing-relay "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/t4skforce/syncthing-relay.svg)](http://microbadger.com/images/t4skforce/syncthing-relay "Get your own version badge on microbadger.com")
 
 # About the Container
 
