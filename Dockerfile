@@ -61,9 +61,8 @@ RUN apt-get --auto-remove -y purge ${BUILD_REQUIREMENTS} \
 
 EXPOSE ${STATUS_PORT} ${SERVER_PORT}
 
-VOLUME ${USER_HOME}/certs
-RUN chown -R $USERNAME:$USERNAME ${USER_HOME}/certs
 USER $USERNAME
+VOLUME ${USER_HOME}/certs
 
 CMD ${USER_HOME}/server/relaysrv \
     -keys="${USER_HOME}/certs" \
