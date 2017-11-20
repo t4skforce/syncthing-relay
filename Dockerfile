@@ -31,7 +31,7 @@ ENV APPUID 1000
 ENV APPGID 1000
 ENV USER_HOME /home/relaysrv
 ENV BUILD_REQUIREMENTS curl openssl
-ENV REQUIREMENTS ca-certificates
+ENV REQUIREMENTS ca-certificates iptables sudo
 ########################################
 
 USER root
