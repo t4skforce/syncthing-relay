@@ -61,12 +61,13 @@ RUN apt-get --auto-remove -y purge ${BUILD_REQUIREMENTS} \
 
 EXPOSE ${STATUS_PORT} ${SERVER_PORT}
 
-USER $USERNAME
 VOLUME ${USER_HOME}/certs
 
-CMD ${USER_HOME}/server/relaysrv \
+CMD iptables -t nat -A PREROUTING -i eth0 -p tcp --dport ${SERVER_PORT} -j REDIRECT --to-port 22067 && \
+    sudo -u $USERNAME ${USER_HOME}/server/relaysrv \
     -keys="${USER_HOME}/certs" \
-    -listen="0.0.0.0:${SERVER_PORT}" \
+    -listen=":22067" \
+    -ext-address ":${SERVER_PORT}" \
     -status-srv="0.0.0.0:${STATUS_PORT}" \
     -debug="${DEBUG}" \
     -global-rate="${RATE_GLOBAL}" \
