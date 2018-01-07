@@ -55,6 +55,8 @@ docker run --name syncthing-relay -d -p 22067:22067 -e DEBUG=true --restart=alwa
 * SERVER_PORT: port hte relay server listens on / default:22067
 * STATUS_PORT: disable by default to enable it add `-d 22070:22070` to you `docker run` command  / default:22070
 * POOLS: leave empty for private relay use "https://relays.syncthing.net/endpoint" for public relay / default: ""
+* RELAY_OPTS: to provide addition options not configurable via env variables above / default: ""
+  - example: `-e RELAY_OPTS='-ext-address=:443'`
 
 Have a look at the current doc [GitHub - relaysrv](https://github.com/syncthing/relaysrv/blob/master/README.md)
 

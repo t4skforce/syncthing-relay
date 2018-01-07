@@ -6,6 +6,8 @@ FROM debian:latest
 ENV DEBUG           false
 
 ENV SERVER_PORT     22067
+ENV RELAY_OPTS      ""
+
 # to enable the status interface add ' -p 22070:22070' to you docker command
 ENV STATUS_PORT     22070
 
@@ -75,4 +77,4 @@ CMD ${USER_HOME}/server/relaysrv \
     -network-timeout="${TIMEOUT_NET}" \
     -ping-interval="${PING_INT}" \
     -provided-by="${PROVIDED_BY}" \
-    -pools="${POOLS}"
+    -pools="${POOLS}" ${RELAY_OPTS}
