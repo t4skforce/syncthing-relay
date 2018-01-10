@@ -57,7 +57,7 @@ RUN curl -Ls $(curl -Ls https://api.github.com/repos/syncthing/relaysrv/releases
 	&& chown -R ${USERNAME}:${USERGROUP} ${USER_HOME}
 
 # cleanup
-RUN apt-get --auto-remove -y purge ${BUILD_REQUIREMENTS} \
+RUN apt-get -y purge ${BUILD_REQUIREMENTS} \
   	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -rf /tmp/*
 
