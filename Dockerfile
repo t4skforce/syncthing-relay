@@ -40,7 +40,7 @@ ENV REQUIREMENTS openssl ca-certificates
 #               Build                  #
 ########################################
 ENV VERSION "v0.14.48"
-ENV DOWNLOADURL "https://github.com/syncthing/discosrv/releases/download/v0.14.48/stdiscosrv-linux-amd64-v0.14.48.tar.gz"
+ENV DOWNLOADURL "https://github.com/syncthing/relaysrv/releases/download/v0.14.48/strelaysrv-linux-amd64-v0.14.48.tar.gz"
 ########################################
 
 USER root
