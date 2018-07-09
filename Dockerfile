@@ -36,6 +36,13 @@ ENV BUILD_REQUIREMENTS curl
 ENV REQUIREMENTS openssl ca-certificates
 ########################################
 
+########################################
+#               Build                  #
+########################################
+ENV VERSION ""
+ENV DOWNLOADURL ""
+########################################
+
 USER root
 ENV DEBIAN_FRONTEND noninteractive
 # setup
@@ -49,7 +56,7 @@ RUN apt-get update -qqy \
 
 # install relay
 WORKDIR /tmp/
-RUN curl -Ls $(curl -Ls https://api.github.com/repos/syncthing/relaysrv/releases/latest | egrep "browser_download_url.*relaysrv-linux-amd64.*.gz" | cut -d'"' -f4) --output relaysrv.tar.gz \
+RUN curl -Ls ${DOWNLOADURL} --output relaysrv.tar.gz \
 	&& tar -zxf relaysrv.tar.gz \
 	&& rm relaysrv.tar.gz \
 	&& mkdir -p ${USER_HOME}/server ${USER_HOME}/certs \
