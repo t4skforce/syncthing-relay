@@ -1,5 +1,5 @@
 # syncthing-relaysrv
-Docker Container for the global relay server for the [http://syncthing.net/](http://syncthing.net/) project. I build the container because ther is no official one. This build is listening on the gihub project of the relay server and gets updated whenever there is a code change. [relaysrv GitHub repo](https://github.com/syncthing/relaysrv). The container is intendet for people who like to roll their own private syncthing "cloud".
+Docker Container for the global relay server for the [http://syncthing.net/](http://syncthing.net/) project. I created this container because there is no official one. This build is listening on the gihub project of the relay server and gets updated whenever there is a code change. [relaysrv GitHub repo](https://github.com/syncthing/relaysrv). The container is intended for people who like to roll their own private syncthing "cloud".
 
 The files for this container can be found at my [GitHub repo](https://github.com/t4skforce/syncthing-relay)
 
@@ -7,7 +7,7 @@ The files for this container can be found at my [GitHub repo](https://github.com
 
 # About the Container
 
-This build is based on [ubuntu:latest](https://hub.docker.com/_/ubuntu/) and installs the latests successful build of the syncthing relay server.
+This build is based on [debian:latest](https://hub.docker.com/_/debian/) and installs the latests successful build of the syncthing relay server.
 
 # How to use this image
 
@@ -29,9 +29,9 @@ chown -R 1000:1000 /your/home/certs
 
 # Container Configuration
 
-There are several configuarion options available. The options are configurable via environment variables (docker default):
+There are several configuration options available. The options are configurable via environment variables (docker default):
 
-Example enablin debug mode:
+Example enabling debug mode:
 ```bash
 export DEBUG=true
 docker run --name syncthing-relay -d -p 22067:22067 --restart=always t4skforce/syncthing-relay:latest
@@ -92,7 +92,7 @@ ExecStop=/usr/bin/docker stop -t 2 syncthing-relay
 WantedBy=multi-user.target
 ```
 
-To start the service manually call `systemctl start syncthing-relay`. For retreaving the current service status call `systemctl status syncthing-relay -l`
+To start the service manually call `systemctl start syncthing-relay`. For retrieving the current service status call `systemctl status syncthing-relay -l`
 
 ```bash
 root@syncthing:~# systemctl status syncthing-relay
