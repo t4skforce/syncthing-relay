@@ -27,24 +27,24 @@ ENV POOLS           ""
 ########################################
 #               Setup                  #
 ########################################
-ARG USERNAME relaysrv
-ARG USERGROUP relaysrv
-ARG APPUID 1000
-ARG APPGID 1000
-ARG USER_HOME /home/relaysrv
-ARG BUILD_REQUIREMENTS curl
-ARG REQUIREMENTS openssl ca-certificates
+ARG USERNAME=relaysrv
+ARG USERGROUP=relaysrv
+ARG APPUID=1000
+ARG APPGID=1000
+ARG USER_HOME=/home/relaysrv
+ARG BUILD_REQUIREMENTS=curl
+ARG REQUIREMENTS="openssl ca-certificates"
 ########################################
 
 ########################################
 #               Build                  #
 ########################################
-ARG VERSION "v0.14.48"
-ARG DOWNLOADURL "https://github.com/syncthing/relaysrv/releases/download/v0.14.48/strelaysrv-linux-amd64-v0.14.48.tar.gz"
+ARG VERSION="v0.14.48"
+ARG DOWNLOADURL="https://github.com/syncthing/relaysrv/releases/download/v0.14.48/strelaysrv-linux-amd64-v0.14.48.tar.gz"
 ########################################
 
 USER root
-ARG DEBIAN_FRONTEND noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 # setup
 RUN apt-get update -qqy \
 	&& apt-get -qqy --no-install-recommends install ${BUILD_REQUIREMENTS} ${REQUIREMENTS} \
