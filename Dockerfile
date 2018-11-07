@@ -31,7 +31,7 @@ ARG USERNAME=relaysrv
 ARG USERGROUP=relaysrv
 ARG APPUID=1000
 ARG APPGID=1000
-ARG USER_HOME=/home/relaysrv
+ENV USER_HOME /home/relaysrv
 ARG BUILD_REQUIREMENTS=curl
 ARG REQUIREMENTS="openssl ca-certificates"
 ########################################
