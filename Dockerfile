@@ -39,8 +39,8 @@ ARG REQUIREMENTS="openssl ca-certificates"
 ########################################
 #               Build                  #
 ########################################
-ARG VERSION="v0.14.48"
-ARG DOWNLOADURL="https://github.com/syncthing/relaysrv/releases/download/v0.14.48/strelaysrv-linux-amd64-v0.14.48.tar.gz"
+ARG VERSION="v1.0.0"
+ARG DOWNLOADURL="https://github.com/syncthing/relaysrv/releases/download/v1.0.0/strelaysrv-linux-amd64-v1.0.0.tar.gz"
 ########################################
 
 USER root
