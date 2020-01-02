@@ -75,8 +75,8 @@ VOLUME ${USER_HOME}/certs
 
 CMD ${USER_HOME}/server/relaysrv \
     -keys="${USER_HOME}/certs" \
-    -listen="0.0.0.0:${SERVER_PORT}" \
-    -status-srv="0.0.0.0:${STATUS_PORT}" \
+    -listen=":${SERVER_PORT}" \
+    -status-srv=":${STATUS_PORT}" \
     -debug="${DEBUG}" \
     -global-rate="${RATE_GLOBAL}" \
     -per-session-rate="${RATE_SESSION}" \
