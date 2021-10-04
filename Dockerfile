@@ -32,7 +32,7 @@ ARG USERGROUP=relaysrv
 ARG APPUID=1000
 ARG APPGID=1000
 ENV USER_HOME /home/relaysrv
-ARG BUILD_REQUIREMENTS=curl
+ARG BUILD"20211004"
 ARG REQUIREMENTS="openssl ca-certificates"
 ########################################
 
@@ -41,7 +41,7 @@ ARG REQUIREMENTS="openssl ca-certificates"
 ########################################
 ARG VERSION="v1.15.0"
 ARG DOWNLOADURL="https://github.com/syncthing/relaysrv/releases/download/v1.15.0/strelaysrv-linux-amd64-v1.15.0.tar.gz"
-ARG BUILD ""
+ARG BUILD "20211004"
 ########################################
 
 USER root
