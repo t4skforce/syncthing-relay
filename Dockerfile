@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM --platform=$TARGETPLATFORM debian:latest
 ########################################
 #              Settings                #
 ########################################
@@ -39,8 +39,11 @@ ARG REQUIREMENTS="openssl ca-certificates"
 ########################################
 #               Build                  #
 ########################################
+ARG BUILDPLATFORM
+ARG TARGETPLATFORM
 ARG VERSION="v1.15.0"
-ARG DOWNLOADURL="https://github.com/syncthing/relaysrv/releases/download/v1.15.0/strelaysrv-linux-amd64-v1.15.0.tar.gz"
+ARG DOWNLOAD_URL_PREFIX="https://github.com/syncthing/relaysrv/releases/download"
+ARG BIN_NAME="strelaysrv"
 ARG BUILD_DATE="2021-12-17T13:41:35Z"
 ########################################
 
@@ -57,10 +60,9 @@ RUN apt-get update -qqy \
 
 # install relay
 WORKDIR /tmp/
-RUN curl -Ls ${DOWNLOADURL} --output relaysrv.tar.gz \
-	&& tar -zxf relaysrv.tar.gz \
-	&& rm relaysrv.tar.gz \
-	&& mkdir -p ${USER_HOME}/server ${USER_HOME}/certs \
+COPY download.sh /tmp/download.sh
+RUN ./download.sh "${DOWNLOAD_URL_PREFIX}" "${BIN_NAME}" "${VERSION}" "${TARGETPLATFORM}"
+RUN mkdir -p ${USER_HOME}/server ${USER_HOME}/certs \
 	&& cp /tmp/*relaysrv*/*relaysrv ${USER_HOME}/server/relaysrv \
 	&& chown -R ${USERNAME}:${USERGROUP} ${USER_HOME}
 
