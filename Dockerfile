@@ -41,7 +41,7 @@ ARG REQUIREMENTS="openssl ca-certificates"
 ########################################
 ARG VERSION="v1.22.1"
 ARG DOWNLOADURL="https://github.com/syncthing/relaysrv/releases/download/v1.22.1/strelaysrv-linux-amd64-v1.22.1.tar.gz"
-ARG BUILD_DATE="2022-12-25T03:01:06Z"
+ARG BUILD_DATE="2022-12-25T03:01:27Z"
 ########################################
 
 USER root
